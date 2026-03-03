@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Көктемгі құпия 🔐</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#ffd6ec,#fff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+.container{
+    background:white;
+    padding:25px;
+    border-radius:25px;
+    width:90%;
+    max-width:420px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
+    text-align:center;
+}
+
+h1{color:#c2185b;font-size:20px;}
+
+.keys{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-around;
+}
+
+.key{
+    font-size:45px;
+    cursor:pointer;
+    transition:0.3s;
+}
+.key:hover{transform:scale(1.2);}
+
+.gift{
+    display:none;
+    font-size:55px;
+    margin-top:20px;
+    cursor:pointer;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.15);}
+    100%{transform:scale(1);}
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    width:85%;
+    max-width:340px;
+}
+
+input{
+    padding:10px;
+    width:85%;
+    margin-top:10px;
+    border-radius:15px;
+    border:1px solid #ff80ab;
+}
+
+button{
+    margin-top:12px;
+    padding:10px 20px;
+    border-radius:20px;
+    border:none;
+    background:#ff4081;
+    color:white;
+}
+
+.music-btn{
+    margin-top:10px;
+    background:#ba68c8;
+}
+
+/* Лепестки */
+.petal{
+    position:fixed;
+    top:-10px;
+    font-size:20px;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(110vh);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎁 Сыйлық алу үшін 3 кілт табу керек</h1>
+
+    <button class="music-btn" onclick="playMusic()">🎵 Музыканы қосу</button>
+
+    <div class="keys">
+        <div class="key" onclick="openModal(1)">🔑</div>
+        <div class="key" onclick="openModal(2)">🔑</div>
+        <div class="key" onclick="openModal(3)">🔑</div>
+    </div>
+
+    <div class="gift" id="gift" onclick="openPassword()">🎁</div>
+</div>
+
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Кілт модалы -->
+<div class="modal" id="modal" onclick="outsideClick(event)">
+    <div class="modal-content">
+        <p id="question"></p>
+        <input type="text" id="answer" placeholder="Жауабы">
+        <br>
+        <button onclick="checkAnswer()">Тексеру</button>
+        <p id="result"></p>
+    </div>
+</div>
+
+<!-- Пароль модалы -->
+<div class="modal" id="passwordModal" onclick="outsideClick(event)">
+    <div class="modal-content">
+        <p>Карточкалардағы 3 сөзді енгізіңіз</p>
+        <input type="text" id="passInput" placeholder="3 сөз бос орынмен">
+        <br>
+        <button onclick="checkPassword()">Сыйлықты ашу</button>
+        <p id="passResult"></p>
+    </div>
+</div>
+
+<script>
+let collected=[];
+let currentKey=0;
+
+function playMusic(){
+    document.getElementById("bgMusic").play();
+}
+
+/* Жұмбақтар ТОЛЫҚ сен жазғандай */
+
+function openModal(num){
+    currentKey=num;
+    modal.style.display="flex";
+    answer.value="";
+    result.innerHTML="";
+
+    if(num===1)
+    question.innerHTML=`Үйде де бар, универде де бар,
+Бірақ есік те емес, терезе де емес.
+Ол қозғалыссыз тұрса да,
+Күн сайын қызмет етеді.
+Біреулер оны тартып алады,
+Біреулер оған таласады.
+Сабақта кешіккендер
+Кейде соны іздеп жүгіреді.`;
+
+    if(num===2)
+    question.innerHTML=`Мұнда кіруге болады, 
+Бірақ босаңсуға болмайды.
+Үндемей бір-бірімізге қарап,
+Сұрақ қойса ішімізден “Неге мен?” деп сұрайтын.
+Ең қиын пәннің алғашқы сабағы
+Дәл осы жерде өтті.
+Сол күннен бастап
+Бұл орын біз үшін
+Wi-Fi емес, “Why-Why?” аймағына айналды.`;
+
+    if(num===3)
+    question.innerHTML=`Университеттің үстінде — болашаққа жол,
+Ал астында — сигнал жоқ аймақ.
+Күн түспейді,
+Wi-Fi ұстамайды,
+Студенттер жолай бермейді,
+Баспалдақпен төмен түссең,
+Өзіңді ғылыми емес,
+Құпия миссияда жүргендей сезінесің.
+Сабақ кестесінде кездеспейді,
+Бірақ қорқынышты жерлерде жиі кездеседі.`;
+}
+
+function checkAnswer(){
+    let ans=answer.value.toLowerCase();
+
+    if(currentKey===1 && (ans.includes("орындық")||ans.includes("стул"))){
+        success(1,`2 корпусқа Темір забордан кіргенде сол жақта ағаш скамейка тұр үсті жабық лавочка сияқты сол жаққа барсаңыз скамейка астында жабысып тұр.`);
+    }
+    else if(currentKey===2 && (ans.includes("кітапхана")||ans.includes("оқу"))){
+        success(2,`Оқу залына кіріп оқ жақта полкада тұрған кітаптардың ең соңына барып ең астындағы бірінші кітаптың ішінде орналасқан.`);
+    }
+    else if(currentKey===3 && (ans.includes("подвал")||ans.includes("жертөле"))){
+        success(3,`Ортамен ең астына түскенде оң жаққа қарай тұра соңына дейін барасыз сол жерде камера тұр ортада үстінде соның астында қалдырам.`);
+    }
+    else{
+        result.innerHTML="Қате жауап 🌸";
+    }
+}
+
+function success(k,text){
+    if(!collected.includes(k)){
+        collected.push(k);
+    }
+    result.innerHTML="Дұрыс! 🔍 " + text;
+
+    if(collected.length===3){
+        gift.style.display="block";
+    }
+}
+
+function openPassword(){
+    passwordModal.style.display="flex";
+}
+
+function checkPassword(){
+    let val=passInput.value.toLowerCase();
+    if(val.includes("шахмат") &&
+       val.includes("кітап") &&
+       val.includes("теннис")){
+        passResult.innerHTML=`🎉 Сыйлық ALASH-та орналасқан.
+Алу үшін кілт сөзді айтыңыз:
+"Мен сыйлықты алуға келгем, есімім Айдана"`;
+    } else {
+        passResult.innerHTML="Қате сөздер 🔐";
+    }
+}
+
+function outsideClick(e){
+    if(e.target.classList.contains("modal"))
+        e.target.style.display="none";
+}
+
+/* Лепестки анимация */
+setInterval(()=>{
+    let petal=document.createElement("div");
+    petal.classList.add("petal");
+    petal.innerHTML="🌸";
+    petal.style.left=Math.random()*100+"vw";
+    petal.style.animationDuration=(Math.random()*3+2)+"s";
+    document.body.appendChild(petal);
+    setTimeout(()=>petal.remove(),5000);
+},400);
+</script>
+
+</body>
+</html>

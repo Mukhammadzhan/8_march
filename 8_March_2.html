@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Басты жүлде</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#ffd6ec,#fff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+
+.container{
+    background:white;
+    padding:25px;
+    border-radius:25px;
+    width:95%;
+    max-width:450px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+h1{color:#c2185b;}
+
+button{
+    margin:8px;
+    padding:10px 18px;
+    border-radius:20px;
+    border:none;
+    background:#ff4081;
+    color:white;
+    cursor:pointer;
+}
+
+.answers button{
+    display:block;
+    width:100%;
+}
+
+.help-buttons{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.simple-gift{
+    font-size:90px;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.card{
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    background:white;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="main">
+    <h1>🏆 Басты жүлдені алу үшін тесттен өтіңіз</h1>
+    <button onclick="startGame()">Тесттен өту</button>
+</div>
+
+<audio id="bgMusic" loop>
+    <source src="music2.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let questions=[
+{q:"1) Келін бала кім?",a:["Камила","Айдана","Аружан","Шынар"],correct:0},
+{q:"2) Мен Айнур Қайтжановна сабағында new сөзін қалай оқыдым?",a:["Нью","Нев","Нов","Нуу"],correct:1},
+{q:"3) 1 семестрде постоянно 2 сабағына келетін сабақ?",a:["Басқару Психологиясы","Ғылым тарихы мен философиясы","Жоғарғы Педагогика","Ағылшын"],correct:1},
+{q:"4) Қай кабинет қасынан өткенде ағылшын тілі есімізге түседі?",a:["108","101","113","112"],correct:1},
+{q:"5) Жеңіс басқару психологиясында А4 қағазды Нұрсултанға қаншаға сатты?",a:["500","1000","2000","3000"],correct:2},
+{q:"6) Айдананың жасы нешеде?",a:["25","28","30","32"],correct:2},
+{q:"7) ALASH нешінші этажда?",a:["1","2","1.5","3"],correct:2},
+{q:"8) successful сөзінің аудармасы?",a:["Сәтті","Табысты","Жеңімпаз","Мықты"],correct:1}
+];
+
+let current=0;
+let used5050=false;
+
+function startGame(){
+    document.getElementById("bgMusic").play();
+    showQuestion();
+}
+
+function showQuestion(){
+    let q=questions[current];
+    main.innerHTML=`
+    <h3>${q.q}</h3>
+    <div class="answers">
+        ${q.a.map((ans,i)=>`<button onclick="checkAnswer(${i})" id="ans${i}">${ans}</button>`).join("")}
+    </div>
+    <div class="help-buttons">
+        <button onclick="use5050()">50/50</button>
+        <button onclick="callFriend()">📞 Звонок другу</button>
+    </div>
+    `;
+}
+
+function checkAnswer(i){
+    if(i===questions[current].correct){
+        current++;
+        if(current<questions.length){
+            showQuestion();
+        }else{
+            translatorWindow();
+        }
+    }else{
+        alert("Қате жауап 😅");
+    }
+}
+
+function translatorWindow(){
+    main.innerHTML=`
+    <h2>Переводчик қолдандыңызба? Ай ай ай 😄</h2>
+    <button onclick="showGift()">Иә</button>
+    <button onclick="showGift()">Жоқ</button>
+    `;
+}
+
+function use5050(){
+    if(used5050) return;
+    used5050=true;
+    let correct=questions[current].correct;
+    let removed=0;
+    for(let i=0;i<4;i++){
+        if(i!==correct && removed<2){
+            document.getElementById("ans"+i).style.display="none";
+            removed++;
+        }
+    }
+}
+
+function callFriend(){
+    window.location.href="tel:+77017302535";
+}
+
+function showGift(){
+    main.innerHTML=`
+    <div class="simple-gift" onclick="openGift()">🎁</div>
+
+    <div class="card" id="hintCard">
+    🔐 Охранникка барып <br><br>
+    <b>"Мен сыйлықты алуға келгем, есімім Айдана"</b><br><br>
+    деп айтасыз
+    </div>
+    `;
+}
+
+function openGift(){
+    document.getElementById("hintCard").style.display="block";
+}
+</script>
+
+</body>
+</html>
